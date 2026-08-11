@@ -1,0 +1,26 @@
+# HorizontalPodAutoscaler scales a target deployment based on observed metrics
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: backend-hpa
+  labels:
+    app: backend
+spec:
+  # ScaleTargetRef specifies the object to scale
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: backend-deployment
+  # Minimum number of replicas
+  minReplicas: 2
+  # Maximum number of replicas
+  maxReplicas: 10
+  # Metrics define what to monitor to scale the target
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50
+# End of HPA manifest

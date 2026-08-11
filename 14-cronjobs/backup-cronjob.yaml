@@ -1,0 +1,25 @@
+# CronJob to perform periodic backups
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-cronjob
+  labels:
+    app: backup
+spec:
+  # Schedule uses cron syntax: minute hour day month day-of-week
+  schedule: "0 2 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: backup
+              image: alpine:3.18
+              command: ["/bin/sh", "-c"]
+              args:
+                - echo "Running backup" && sleep 10
+              env:
+                - name: BACKUP_PATH
+                  value: /backup
+# End of backup CronJob manifest

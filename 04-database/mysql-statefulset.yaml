@@ -1,0 +1,187 @@
+# Kubernetes StatefulSet - MySQL Database
+# StatefulSet manages stateful applications with stable network identity and persistent storage
+# Each pod gets a stable hostname: mysql-0, mysql-1, mysql-2, etc.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  # Name of the StatefulSet
+  name: mysql
+  # Namespace where StatefulSet is deployed
+  namespace: default
+  # Labels for organizing resources
+  labels:
+    app: mysql
+    tier: database
+spec:
+  # Number of pod replicas to create
+  replicas: 1
+  
+  # Service name - must reference a Headless Service
+  # This provides stable network identity for pods
+  serviceName: mysql-headless
+  
+  # Selector to match pods managed by this StatefulSet
+  selector:
+    matchLabels:
+      app: mysql
+  
+  # Template for pods created by this StatefulSet
+  template:
+    metadata:
+      # Labels applied to pods
+      labels:
+        app: mysql
+        tier: database
+    
+    spec:
+      # Containers running in each pod
+      containers:
+        # Container name
+        - name: mysql
+          # Container image and tag
+          image: mysql:8.0
+          # Image pull policy (Always, IfNotPresent, Never)
+          imagePullPolicy: IfNotPresent
+          
+          # Ports exposed by container
+          ports:
+            # Container port name for reference
+            - name: mysql
+              # Port number where MySQL listens
+              containerPort: 3306
+              # Protocol (TCP or UDP)
+              protocol: TCP
+          
+          # Environment variables passed to container
+          env:
+            # MySQL root password
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: database-password
+            
+            # MySQL database to create on startup
+            - name: MYSQL_DATABASE
+              value: "myapp"
+            
+            # MySQL user
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: database-username
+            
+            # MySQL user password
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: database-password
+          
+          # Resource limits and requests
+          resources:
+            # Minimum resources guaranteed to the container
+            requests:
+              memory: "256Mi"  # 256 Megabytes
+              cpu: "250m"      # 0.25 CPU cores
+            
+            # Maximum resources the container can use
+            limits:
+              memory: "512Mi"  # 512 Megabytes
+              cpu: "500m"      # 0.5 CPU cores
+          
+          # Liveness probe - checks if container should be restarted
+          livenessProbe:
+            # Command to check container health
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - mysqladmin ping -h localhost
+            # Delay before first probe (seconds)
+            initialDelaySeconds: 30
+            # Interval between probes (seconds)
+            periodSeconds: 10
+            # Timeout for probe (seconds)
+            timeoutSeconds: 5
+            # Consecutive failures before marking unhealthy
+            failureThreshold: 3
+          
+          # Readiness probe - checks if container is ready to receive traffic
+          readinessProbe:
+            # Command to check readiness
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - mysql -h localhost -u root -p$MYSQL_ROOT_PASSWORD -e "SELECT 1"
+            # Delay before first probe (seconds)
+            initialDelaySeconds: 10
+            # Interval between probes (seconds)
+            periodSeconds: 5
+            # Timeout for probe (seconds)
+            timeoutSeconds: 3
+            # Consecutive failures before marking not ready
+            failureThreshold: 3
+          
+          # Volume mounts - where to mount storage
+          volumeMounts:
+            # Mount persistent storage for MySQL data
+            - name: mysql-storage
+              # Path inside container where volume is mounted
+              mountPath: /var/lib/mysql
+            
+            # Mount config files if needed
+            - name: mysql-config
+              mountPath: /etc/mysql/conf.d
+      
+      # Volumes used by pods
+      volumes:
+        # ConfigMap volume for MySQL configuration
+        - name: mysql-config
+          configMap:
+            # Name of ConfigMap containing config files
+            name: mysql-config
+            # Optional: only mount specific keys
+            items:
+              - key: mysql.cnf
+                path: mysql.cnf
+  
+  # VolumeClaimTemplate - creates PersistentVolumeClaim for each pod
+  # This provides persistent storage that survives pod deletion
+  volumeClaimTemplates:
+    - metadata:
+        # Name of the PVC
+        name: mysql-storage
+        # Labels for PVC
+        labels:
+          app: mysql
+      spec:
+        # Access mode - how the volume can be accessed
+        # ReadWriteOnce: can be mounted as read-write by a single node
+        accessModes:
+          - ReadWriteOnce
+        
+        # Storage class for dynamic provisioning
+        storageClassName: fast-ssd
+        
+        # Storage resources
+        resources:
+          # Amount of storage requested
+          requests:
+            storage: 10Gi  # 10 Gigabytes
+  
+  # Pod management policy - controls how pods are created/deleted
+  # OrderedReady: pods created/deleted in order (slower but safer)
+  # Parallel: pods created/deleted in parallel (faster)
+  podManagementPolicy: OrderedReady
+  
+  # Update strategy - how to update pods when spec changes
+  updateStrategy:
+    # Type of update (OnDelete: manual, RollingUpdate: automatic)
+    type: RollingUpdate
+    # Configuration for rolling updates
+    rollingUpdate:
+      # Maximum number of pods that can be updated simultaneously
+      partition: 0

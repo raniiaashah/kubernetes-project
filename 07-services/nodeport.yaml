@@ -1,0 +1,19 @@
+# NodePort Service exposes the backend Pods on each Node's IP at a static port
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-nodeport
+  labels:
+    app: backend
+spec:
+  # Type NodePort exposes the service on a port on every node
+  type: NodePort
+  selector:
+    app: backend
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+      # NodePort range is usually 30000-32767
+      nodePort: 30080

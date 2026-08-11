@@ -1,0 +1,36 @@
+# Kubernetes ConfigMap for application configuration
+# This ConfigMap stores non-sensitive configuration data that can be mounted as files or environment variables
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: default
+data:
+  # Application properties file - contains database and logging configuration
+  app.properties: |
+    # Database connection settings
+    database.host=mysql
+    database.port=3306
+    database.name=myapp
+    # Logging level configuration
+    log.level=INFO
+  
+  # JSON configuration file - contains API and caching settings
+  config.json: |
+    {
+      # API timeout (seconds) and retry attempts
+      "api": {
+        "timeout": 30,
+        "retries": 3
+      },
+      # Cache TTL (time to live) in seconds
+      "cache": {
+        "ttl": 3600
+      }
+    }
+  
+  # Environment type for the application
+  environment: production
+  
+  # Debug mode flag - set to "true" to enable debug logging
+  debug: "false"

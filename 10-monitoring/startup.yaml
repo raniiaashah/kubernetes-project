@@ -1,0 +1,21 @@
+# Startup probe example for a Pod container
+# The kubelet uses this probe to determine when application startup is complete
+apiVersion: v1
+kind: Pod
+metadata:
+  name: startup-demo
+  labels:
+    app: monitor-demo
+spec:
+  containers:
+    - name: app
+      image: nginx:latest
+      # Startup probe allows slow-starting applications more time before liveness checks
+      startupProbe:
+        httpGet:
+          path: /
+          port: 80
+        failureThreshold: 30
+        periodSeconds: 10
+
+# End of startup probe example

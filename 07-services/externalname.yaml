@@ -1,0 +1,16 @@
+# ExternalName Service maps a service to an external DNS name
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-externalname
+  labels:
+    app: backend
+spec:
+  # ExternalName points the service to an external DNS hostname
+  type: ExternalName
+  externalName: example.com
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80

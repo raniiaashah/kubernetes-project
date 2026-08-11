@@ -1,0 +1,25 @@
+# CronJob to clean up temporary files or expired data
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cleanup-cronjob
+  labels:
+    app: cleanup
+spec:
+  # This example runs every day at 3:30 AM
+  schedule: "30 3 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: cleanup
+              image: alpine:3.18
+              command: ["/bin/sh", "-c"]
+              args:
+                - echo "Cleaning temp files" && sleep 10
+              env:
+                - name: CLEANUP_PATH
+                  value: /tmp
+# End of cleanup CronJob manifest

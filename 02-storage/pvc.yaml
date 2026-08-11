@@ -1,0 +1,26 @@
+# PersistentVolumeClaim manifest requesting storage from a PersistentVolume
+apiVersion: v1
+# The type of Kubernetes object
+kind: PersistentVolumeClaim
+# Metadata contains identifying information for the PVC
+metadata:
+# Name of the PVC (used to reference it in pods)
+	name: pvc-data
+# Optional labels for selection and organization
+	labels:
+		app: pv-data
+# Spec describes the desired characteristics of the PVC
+spec:
+# Access modes define how the volume will be mounted by pods
+	accessModes:
+		- ReadOnlyMany
+# Resources requests specify the storage size requested
+	resources:
+		requests:
+			storage: 10Gi
+# StorageClassName selects which StorageClass (and matching PVs) to use
+	storageClassName: local-storage
+# volumeName binds this PVC to a specific PersistentVolume by name
+	volumeName: pv-data
+
+# End of PVC manifest

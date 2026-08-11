@@ -1,0 +1,17 @@
+# Headless Service provides direct pod addressability without a cluster IP
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-headless
+  labels:
+    app: backend
+spec:
+  # ClusterIP: None creates a headless Service
+  clusterIP: None
+  selector:
+    app: backend
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80

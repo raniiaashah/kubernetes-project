@@ -1,0 +1,25 @@
+# Service exposes the backend Deployment to other pods or external clients
+apiVersion: v1
+kind: Service
+metadata:
+# Name used to reference the Service
+	name: backend-service
+	labels:
+		app: backend
+spec:
+# Type determines how the Service is exposed: ClusterIP, NodePort, LoadBalancer
+# ClusterIP (default) exposes the service only inside the cluster
+	type: ClusterIP
+# Selector matches pods with these labels (must match the Deployment pod labels)
+	selector:
+		app: backend
+# Ports exposed by the Service
+	ports:
+		- name: http
+			protocol: TCP
+			# The port that other services/clients use to talk to this Service
+			port: 80
+			# The pod container port to forward traffic to
+			targetPort: 80
+
+# End of Service manifest

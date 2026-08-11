@@ -1,0 +1,23 @@
+# Readiness probe example for a Pod container
+# The kubelet uses this probe to know when the container is ready to receive traffic
+apiVersion: v1
+kind: Pod
+metadata:
+  name: readiness-demo
+  labels:
+    app: monitor-demo
+spec:
+  containers:
+    - name: app
+      image: nginx:latest
+      # Readiness probe ensures the pod is ready before it receives service traffic
+      readinessProbe:
+        httpGet:
+          path: /
+          port: 80
+        initialDelaySeconds: 5
+        periodSeconds: 10
+        successThreshold: 1
+        failureThreshold: 3
+
+# End of readiness probe example

@@ -1,0 +1,15 @@
+# RoleBinding grants a Role to subjects within a namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: example-rolebinding
+  namespace: default
+subjects:
+  - kind: ServiceAccount
+    name: example-sa
+    namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: example-role
+# End of RoleBinding manifest

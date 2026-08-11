@@ -1,0 +1,40 @@
+# Kubernetes Service - Headless Service for StatefulSet
+# A headless service doesn't have a ClusterIP, allowing direct DNS resolution to pod IPs
+# Used by StatefulSets to provide stable network identities for pods
+apiVersion: v1
+kind: Service
+metadata:
+  # Name of the headless service
+  name: mysql-headless
+  # Namespace where service is deployed
+  namespace: default
+  # Labels for organizing and selecting resources
+  labels:
+    app: mysql
+    tier: database
+spec:
+  # clusterIP set to None makes this a headless service
+  # This allows StatefulSet pods to have stable DNS names
+  clusterIP: None
+  
+  # Selector to match pods that this service targets
+  selector:
+    app: mysql
+  
+  # Port configuration
+  ports:
+    # Port name for reference
+    - name: mysql
+      # Protocol used (TCP or UDP)
+      protocol: TCP
+      # Port exposed by the service
+      port: 3306
+      # Port on the pod to forward to
+      targetPort: 3306
+  
+  # Service type - ClusterIP (default), NodePort, LoadBalancer, ExternalName
+  type: ClusterIP
+  
+  # publishNotReadyAddresses allows DNS resolution even if pods are not ready
+  # Useful for StatefulSet with initialization
+  publishNotReadyAddresses: true

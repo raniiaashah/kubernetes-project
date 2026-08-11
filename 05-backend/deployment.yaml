@@ -1,0 +1,34 @@
+# Deployment manifest for the backend application
+apiVersion: apps/v1
+# The kind of Kubernetes object
+kind: Deployment
+metadata:
+	# Name of the Deployment resource
+	name: backend-deployment
+	# Labels used to identify and select this deployment
+	labels:
+		app: backend
+spec:
+	# Desired number of pod replicas
+	replicas: 2
+	# Selector defines how the Deployment finds which Pods to manage
+	selector:
+		matchLabels:
+			app: backend
+	# Pod template describes the Pods to create
+	template:
+		metadata:
+			# Labels applied to Pods created from this template
+			labels:
+				app: backend
+		spec:
+			# List of containers that will run in each Pod
+			containers:
+				- name: backend
+					# Container image to run (user-provided)
+					image: malikzohaib1482/backend:latest10
+					# Image pull policy: IfNotPresent avoids re-pulling existing images
+					imagePullPolicy: IfNotPresent
+					# Ports exposed by the container
+					ports:
+						- containerPort: 80

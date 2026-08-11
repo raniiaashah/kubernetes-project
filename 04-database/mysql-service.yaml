@@ -1,0 +1,41 @@
+# Kubernetes Service - ClusterIP Service for MySQL
+# This service provides a stable endpoint for connecting to MySQL pods
+# ClusterIP makes the service accessible only within the cluster
+apiVersion: v1
+kind: Service
+metadata:
+  # Name of the service
+  name: mysql-service
+  # Namespace where service is deployed
+  namespace: default
+  # Labels for organizing and selecting resources
+  labels:
+    app: mysql
+    tier: database
+spec:
+  # Service type - ClusterIP: only accessible within cluster
+  type: ClusterIP
+  
+  # Selector to match pods that this service targets
+  selector:
+    app: mysql
+  
+  # Port configuration
+  ports:
+    # Port name for reference
+    - name: mysql
+      # Protocol used (TCP or UDP)
+      protocol: TCP
+      # Port exposed by the service
+      port: 3306
+      # Port on the pod to forward to
+      targetPort: 3306
+  
+  # sessionAffinity ensures client requests go to the same pod
+  # Useful for database connections
+  sessionAffinity: ClientIP
+  
+  # sessionAffinityConfig - timeout for session affinity
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800  # 3 hours

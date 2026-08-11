@@ -1,0 +1,22 @@
+# Liveness probe example for a Pod container
+# The kubelet uses this probe to know when to restart the container
+apiVersion: v1
+kind: Pod
+metadata:
+  name: liveness-demo
+  labels:
+    app: monitor-demo
+spec:
+  containers:
+    - name: app
+      image: nginx:latest
+      # Liveness probe checks if the application is still running
+      livenessProbe:
+        httpGet:
+          path: /
+          port: 80
+        initialDelaySeconds: 5
+        periodSeconds: 10
+        failureThreshold: 3
+
+# End of liveness probe example

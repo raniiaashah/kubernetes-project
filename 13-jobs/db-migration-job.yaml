@@ -1,0 +1,33 @@
+# Kubernetes Job to run a one-time database migration
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migration-job
+  labels:
+    app: db-migration
+spec:
+  # Completions is the number of successful pod completions desired
+  completions: 1
+  # Parallelism is the number of pods running in parallel
+  parallelism: 1
+  template:
+    metadata:
+      labels:
+        app: db-migration
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: db-migration
+          image: alpine:3.18
+          command: ["/bin/sh", "-c", "echo Running DB migration... && sleep 10"]
+          # Example environment variables for database access
+          env:
+            - name: DB_HOST
+              value: mysql-service
+            - name: DB_NAME
+              value: mydb
+          # Example command arguments or lifecycle configuration can be added here
+          # args:
+          #   - "migrate"
+          #   - "up"
+# End of Job manifest

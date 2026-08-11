@@ -1,0 +1,22 @@
+# StorageClass manifest defines how dynamic storage is provisioned by Kubernetes
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+# Metadata holds the name of the StorageClass object
+metadata:
+  name: local-storage
+# The provisioner is responsible for creating volumes for this class
+provisioner: kubernetes.io/no-provisioner
+# ReclaimPolicy controls what happens to the physical volume after release
+reclaimPolicy: Retain
+# VolumeBindingMode defines when volume binding and dynamic provisioning occur
+volumeBindingMode: WaitForFirstConsumer
+# Mount options passed to the volume plugin for volumes created with this class
+mountOptions:
+  - hard
+  - nfsvers=4.1
+# Optional parameters for the provisioner; empty for local storage
+parameters:
+  # local provisioner needs a path on the node, usually configured outside Kubernetes
+  path: /mnt/data
+
+# End of StorageClass manifest
