@@ -9,7 +9,7 @@ data:
   # Application properties file - contains database and logging configuration
   app.properties: |
     # Database connection settings
-    database.host=mysql
+    database.host=mysql-service.default.svc.cluster.local
     database.port=3306
     database.name=myapp
     # Logging level configuration

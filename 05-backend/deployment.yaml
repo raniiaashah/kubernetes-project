@@ -20,4 +20,31 @@ spec:
           image: malikzohaib1482/backend:latest10
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 80
+            - containerPort: 5000
+          
+          env:
+            # MySQL database host - using Kubernetes Service DNS name
+            - name: DB_HOST
+              value: mysql-service.default.svc.cluster.local
+            
+            # MySQL database port
+            - name: DB_PORT
+              value: "3306"
+            
+            # MySQL database name
+            - name: DB_NAME
+              value: myapp
+            
+            # MySQL user
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: database-username
+            
+            # MySQL password
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: database-password

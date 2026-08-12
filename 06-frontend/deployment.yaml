@@ -21,4 +21,9 @@ spec:
           image: malikzohaib1482/frantend:backendimp1
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 80
+            - containerPort: 8501
+          
+          env:
+            # Backend service URL for API calls
+            - name: BACKEND_URL
+              value: http://backend-service.default.svc.cluster.local:80

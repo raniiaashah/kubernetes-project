@@ -7,9 +7,9 @@ metadata:
     app: pv-data
 spec:
   accessModes:
-    - ReadOnlyMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 10Gi
-  storageClassName: local-storage
+  storageClassName: fast-ssd
   volumeName: pv-data

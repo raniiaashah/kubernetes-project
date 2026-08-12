@@ -1,0 +1,30 @@
+# Kubernetes ConfigMap for MySQL configuration
+# Stores MySQL configuration files that are mounted into the MySQL container
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+  namespace: default
+data:
+  # MySQL configuration file
+  mysql.cnf: |
+    [mysqld]
+    # Basic MySQL configuration
+    default-storage-engine=InnoDB
+    
+    # Character set configuration
+    character-set-server=utf8mb4
+    collation-server=utf8mb4_unicode_ci
+    
+    # Connection settings
+    max_connections=100
+    wait_timeout=600
+    
+    # Logging configuration
+    log_error=/var/log/mysql/error.log
+    general_log=0
+    general_log_file=/var/log/mysql/query.log
+    
+    # Performance tuning
+    innodb_buffer_pool_size=128M
+    innodb_log_file_size=50M

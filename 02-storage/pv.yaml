@@ -8,9 +8,9 @@ spec:
   capacity:
     storage: 10Gi
   accessModes:
-    - ReadOnlyMany
+    - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: local-storage
+  storageClassName: fast-ssd
   hostPath:
     path: /mnt/data/pv-data
     type: DirectoryOrCreate
