@@ -1,16 +1,16 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-	name: pv-data
-	labels:
-		app: pv-data
+  name: pv-data
+  labels:
+    app: pv-data
 spec:
-	capacity:
-		storage: 10Gi
-	accessModes:
-		- ReadOnlyMany
-	persistentVolumeReclaimPolicy: Retain
-	storageClassName: local-storage
-	hostPath:
-		path: /mnt/data/pv-data
-		type: DirectoryOrCreate
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadOnlyMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  hostPath:
+    path: /mnt/data/pv-data
+    type: DirectoryOrCreate

@@ -2,28 +2,20 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-# Name of the HPA object
-	name: backend-hpa
-	labels:
-		app: backend
+  name: backend-hpa
+  labels:
+    app: backend
 spec:
-# Target deployment to scale
-	scaleTargetRef:
-		apiVersion: apps/v1
-		kind: Deployment
-		name: backend-deployment
-# Minimum number of replicas the HPA will scale down to
-	minReplicas: 2
-# Maximum number of replicas the HPA will scale up to
-	maxReplicas: 10
-# Metrics to monitor for scaling decisions
-	metrics:
-		- type: Resource
-			resource:
-				name: cpu
-				# Target average CPU utilization across pods (percentage)
-				target:
-					type: Utilization
-					averageUtilization: 50
-
-# End of HPA manifest
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: backend-deployment
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50
